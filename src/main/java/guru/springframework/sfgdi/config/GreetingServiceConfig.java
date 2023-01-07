@@ -1,5 +1,8 @@
 package guru.springframework.sfgdi.config;
 
+import com.springframework.pets.DogPetService;
+import com.springframework.pets.PetService;
+import com.springframework.pets.PetServiceFactory;
 import guru.springframework.sfgdi.repositories.EnglishGreetingRepository;
 import guru.springframework.sfgdi.repositories.EnglishGreetingRepositoryImpl;
 import guru.springframework.sfgdi.services.*;
@@ -11,38 +14,58 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class GreetingServiceConfig {
 
+    @Bean
+    PetServiceFactory petServiceFactory() {
+        return new PetServiceFactory();
+    }
+
+    @Profile({"dog", "default"})
+    @Bean
+    PetService dogPetService(PetServiceFactory petServiceFactory) {
+        return petServiceFactory.getPetService("dog");
+    }
+
+    @Profile("cat")
+    @Bean
+    PetService catPetService(PetServiceFactory petServiceFactory) {
+        return petServiceFactory.getPetService("cat");
+    }
+
     @Profile({"ES", "default"})
     @Bean("i18nService")
-    I18SpanishGreetingService i18SpanishGreetingService(){
+    I18SpanishGreetingService i18SpanishGreetingService() {
         return new I18SpanishGreetingService();
     }
 
     @Bean
-    EnglishGreetingRepository englishGreetingRepository(){
+    EnglishGreetingRepository englishGreetingRepository() {
         return new EnglishGreetingRepositoryImpl();
     }
+
     @Profile("EN")
     @Bean
-    I18nEnglishGreetingService i18nService(EnglishGreetingRepository englishGreetingRepository){
+    I18nEnglishGreetingService i18nService(EnglishGreetingRepository englishGreetingRepository) {
         return new I18nEnglishGreetingService(englishGreetingRepository);
     }
+
     @Primary
     @Bean
-    PrimaryGreetingService primaryGreetingService(){
+    PrimaryGreetingService primaryGreetingService() {
         return new PrimaryGreetingService();
     }
+
     @Bean
-    ConstructorGreetingService constructorGreetingService(){
+    ConstructorGreetingService constructorGreetingService() {
         return new ConstructorGreetingService();
     }
 
     @Bean
-    PropertyInjectedGreetingService propertyInjectedGreetingService(){
+    PropertyInjectedGreetingService propertyInjectedGreetingService() {
         return new PropertyInjectedGreetingService();
     }
 
     @Bean
-    SetterInjectedGreetingService setterInjectedGreetingService(){
+    SetterInjectedGreetingService setterInjectedGreetingService() {
         return new SetterInjectedGreetingService();
     }
 }
